@@ -3,8 +3,8 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from core.apps.abstract_models import ReadModelSerializer
-from core.apps.users.models import User, UserMedia, SpecialistProfile, PatientProfile
-
+from core.apps.users.models import Appointment, User, UserMedia, SpecialistProfile, PatientProfile , Ratting , Comment , Favorite
+from django.db.models import Avg
 
 # class ChangeUserPasswordSerializer(serializers.Serializer):
 #     def create(self, validated_data):
@@ -38,6 +38,12 @@ class ReadUserMiniInfoSerializer(ReadModelSerializer):
 
 class ReadSpecialistSerializer(ReadModelSerializer):
     user = ReadUserMiniInfoSerializer(many=False)
+
+    rattingScore = serializers.SerializerMethodField("apple")
+
+    def apple(self , object):
+      return  Ratting.objects.filter(specialist = object).aggregate(Avg('stars'))
+        
 
     class Meta:
         model = SpecialistProfile
@@ -87,3 +93,50 @@ class WritePatientSerializer(ModelSerializer):
         instance.__dict__.update(validated_data)
         instance.save(update_fields=validated_data.keys())
         return instance
+
+class ReadRatting(ModelSerializer) :
+    # specialist = ReadSpecialistSerializer()
+    # patient = ReadPatientSerializer()
+
+    class Meta:
+        model = Ratting
+        fields = '__all__'
+
+
+class WriteAppointmentSerializer(ModelSerializer) :
+        class Meta:
+            model = Appointment
+            fields = '__all__'
+
+
+class ReadAppointmentSerializer (ModelSerializer) : 
+        specialist = ReadSpecialistSerializer()
+        patient = ReadPatientSerializer()
+
+        class Meta:
+                model = Appointment
+                fields = '__all__'
+
+class ReadCommentSerializer(ModelSerializer) :
+    user = ReadUserMiniInfoSerializer()
+    class  Meta:
+        model = Comment
+        fields = '__all__'
+
+# class WriteCommentSerializer(ModelSerializer) :
+    
+#     class  Meta:
+#         model = Comment
+#         fields = '__all__'
+
+
+class FavSerializer(ModelSerializer) :
+        specialist = ReadSpecialistSerializer()
+        patient = ReadPatientSerializer()
+        class  Meta:
+            model = Favorite
+            fields = '__all__'
+
+
+
+        

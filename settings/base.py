@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     # 'rest_framework_simplejwt',
-    # 'django_filters',
+    'django_filters',
     #'storages',
     'core.apps.users'
 ]
@@ -171,6 +171,10 @@ ENVIRONMENT = "BASE"
 #     'PAGE_SIZE': 10,
 # }
 
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
 APPEND_SLASH = True
 
 # ACCOUNT_AUTHENTICATION_METHOD = 'email'
@@ -183,3 +187,12 @@ APPEND_SLASH = True
 #     'django.contrib.auth.backends.ModelBackend',
 #     'django.contrib.auth.backends.RemoteUserBackend',
 # )
+
+
+# Emailing settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mudy2012@gmail.com'
+EMAIL_HOST_PASSWORD = 'paksgjpwwvgvurfg'

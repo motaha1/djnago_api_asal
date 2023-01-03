@@ -1,9 +1,14 @@
 from logging import getLogger
 from django.db import IntegrityError
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
+from core.apps.components.firebase import  firebase_chat, firebase_login, firebase_sendNotification, signup_firebase
 
 from core.apps.users.constants import InternalCustomAdminActions
+from core.apps.components.emails import send_otp_via_email
 from core.apps.users.models import PatientProfile, User, SpecialistProfile, UserMedia
+import requests
+import pyodbc 
+
 
 logger = getLogger(__name__)
 
@@ -45,6 +50,12 @@ class UserComponent:
 
             new_patient = PatientProfile(user=new_user)
             new_patient.save()
+            otp = send_otp_via_email(email)
+            new_patient.otp = otp
+            signup_firebase(id = new_patient.id , email = email , password = password ,name=username ,avatar='https://d2pas86kykpvmq.cloudfront.net/images/humans-3.0/ava-1.png' , type='patient' )
+            new_patient.save()
+
+
 
             return new_user
         except IntegrityError:
@@ -71,6 +82,7 @@ class UserComponent:
 
             new_patient = SpecialistProfile(user=new_user)
             new_patient.save()
+            signup_firebase(id = new_patient.id , email = email , password = password ,name=username ,avatar='https://d2pas86kykpvmq.cloudfront.net/images/humans-3.0/ava-1.png' , type='Special' )
 
             return new_user
         except IntegrityError:
@@ -80,6 +92,7 @@ class UserComponent:
         except ValueError:
             raise ValidationError("invalid email or password")
 
+
     @staticmethod
     def update_user_avatar(user_id: any, image: any):
         user_avatar = UserMedia.objects.create(profile_img=image)
@@ -88,4 +101,70 @@ class UserComponent:
         user.save()
         return user_avatar
 
+
+    @staticmethod
+    def login(email , password) : 
+
+        user_info = firebase_login(email = email , password = password)
+        
+        if user_info is not None :
+            user_id = user_info['id']
+            
+            if user_info['type']  == 'patient':
+                user =  requests.get (f'http://127.0.0.1:8000/api/users/patients/{user_id}').json()
+                
+
+                return(user)
+            
+            elif user_info['type']  == 'Special':
+                user = requests.get (f'http://127.0.0.1:8000/api/users/specialists/{user_id}').json()
+                return(user)
+                
+
+        
+        else :
+            return ('email or password worng')
+
+
+    @staticmethod
+    def chat(sender , receiver , text , time) :
+        firebase_chat(sender=sender , receiver=receiver , text=text , time= time)
+        
+
+    @staticmethod
+    def palestineid(name , ID):
+        
+
+# msa = [x for x in pyodbc.drivers() if'ACCESS' in x.upper()]
+# print(f'hello ----- {msa}')
+
+        try :
+            constr = 'Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq=' + 'D:\sejel\sejel.mdb'
+            con = pyodbc.connect(constr)
+            print('ok')
+            cur = con.cursor()
+
+            cur.execute(f"SELECT * FROM Sgaza where id = '{ID}'")
+            for x in cur.fetchall():
+                pass 
+            cur.close()
+
+            if(x[1]==name):
+                return x[1]+" "+x[2]+" "+x[3]+" "+x[4]
+            
+            else :
+                return 'error data'
+
+
+
+
+
+        except pyodbc.Error as e :
+            print(e)
+
+
+    
+    @staticmethod
+    def sendNotification(title , msg , token):
+        firebase_sendNotification(token=list(token) , msg=msg , title=title)
 

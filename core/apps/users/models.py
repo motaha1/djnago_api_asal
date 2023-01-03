@@ -44,9 +44,10 @@ class User(AbstractBaseUser, PermissionsMixin, AskCareBaseModel):
                                   on_delete=models.DO_NOTHING)
 
     is_staff = models.BooleanField(_('staff'), default=False)
-    is_active = models.BooleanField(_('active'), default=True)
+    is_active = models.BooleanField(_('active'), default=False)
     is_patient = models.BooleanField(_('is patient'), default=False)
     is_specialist = models.BooleanField(_('is specialist'), default=False)
+    fcm_token = models.CharField(max_length=100000 , blank=True , null=True )
 
     objects = UserManager()
     REQUIRED_FIELDS = ['username', 'password']
@@ -95,6 +96,8 @@ class PatientProfile(AskCareBaseModel):
     chronic_illness = models.ManyToManyField(ChronicIllness, blank=True, null=True)
     have_allergies = models.BooleanField(_('have allergies'), default=False)
 
+    otp = models.CharField(max_length=200 , null=True , blank=True)  ####new 
+
 
 class SpecialistProfile(AskCareBaseModel):
     user = models.OneToOneField(User,
@@ -111,18 +114,58 @@ class SpecialistProfile(AskCareBaseModel):
     examination_avg_period = models.PositiveIntegerField(_('examination avg time'), default=15)  # in mins
     job_title = models.CharField(_('job'), max_length=225, blank=True)
 
+    ####new ##
+    allow_Messages = models.BooleanField(default=True)
+    allow_booking = models.BooleanField(default=True)
+
+
+
+    @property
+    def get_avg(self):
+        pass
+        #return Rating.objects.filter(nurse = self).count()
+
+
+
+
 
 class Symptoms(models.Model):
     name = models.CharField(_('symptoms name'), max_length=100, null=False, blank=False, unique=True)
 
 
 class Appointment(AskCareBaseModel):
-    specialist = models.ForeignKey(SpecialistProfile, blank=False, null=False, on_delete=models.CASCADE)
-    patient = models.ForeignKey(PatientProfile, blank=False, null=False, on_delete=models.CASCADE)
-    time = models.DateTimeField(null=False)
+    specialist = models.ForeignKey(SpecialistProfile, blank=False, null=True, on_delete=models.CASCADE)
+    patient = models.ForeignKey(PatientProfile, blank=False, null=True, on_delete=models.CASCADE)
+    start = models.CharField(null=True  ,max_length=50 )
+    end = models.CharField(null=True ,max_length=50)
+    date = models.CharField(null=True ,max_length=50 )
+    #%y/%m/%d
 
     # status = models.CharField(_('appointment status'), choices=AppointmentStatus.choices, max_length=50,
     # null=False, default=)
 
-    class Meta:
-        unique_together = [['specialist', 'patient', 'time']]
+    # class Meta:
+    #     unique_together = [['specialist', 'patient', 'time']]
+
+
+#### new added######
+
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+class Ratting (AskCareBaseModel):
+    specialist = models.ForeignKey(SpecialistProfile, blank=False, null=False, on_delete=models.CASCADE)
+    patient = models.ForeignKey(PatientProfile, blank=False, null=False, on_delete=models.CASCADE)
+    stars = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    comment = models.CharField(max_length=1000 , blank = True , null = True )
+
+
+
+class Comment(AskCareBaseModel) :
+    user = models.ForeignKey(User , on_delete= models.CASCADE , blank= False , null= False)
+    text = models.TextField(null=False , blank=False)
+
+
+class Favorite(models.Model) :
+    specialist = models.ForeignKey(SpecialistProfile, blank=False, null=False, on_delete=models.CASCADE)
+    patient = models.ForeignKey(PatientProfile, blank=False, null=False, on_delete=models.CASCADE)
+
