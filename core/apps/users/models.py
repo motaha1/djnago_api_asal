@@ -82,6 +82,10 @@ class User(AbstractBaseUser, PermissionsMixin, AskCareBaseModel):
 
 class ChronicIllness(models.Model):
     name = models.CharField(_('chronic illness name'), max_length=100, null=False, blank=False, unique=True)
+    special_type =  models.CharField(_('type'), choices=MedicalType.choices, max_length=50, null=True)    #new
+
+    def __str__(self) :
+        return self.name
 
 
 class PatientProfile(AskCareBaseModel):
@@ -117,6 +121,7 @@ class SpecialistProfile(AskCareBaseModel):
     ####new ##
     allow_Messages = models.BooleanField(default=True)
     allow_booking = models.BooleanField(default=True)
+    medical_type =   models.CharField(_('medical type'), choices=MedicalType.choices,max_length=1000,  null=True)  #medical type
 
 
 
@@ -153,7 +158,7 @@ class Appointment(AskCareBaseModel):
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Ratting (AskCareBaseModel):
-    specialist = models.ForeignKey(SpecialistProfile, blank=False, null=False, on_delete=models.CASCADE)
+    specialist = models.ForeignKey(SpecialistProfile, blank=False, null=False, on_delete=models.CASCADE ,  related_name='rates')
     patient = models.ForeignKey(PatientProfile, blank=False, null=False, on_delete=models.CASCADE)
     stars = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
     comment = models.CharField(max_length=1000 , blank = True , null = True )

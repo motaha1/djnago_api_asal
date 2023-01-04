@@ -3,7 +3,7 @@ from django.urls import path
 from core.apps.users.views import PatientCreateAPIView, SpecialistCreateAPIView, UpdateUserAvatarView, \
     RetrieveOrUpdateSpecialistAPIView, RetrieveOrUpdatePatientAPIView, ListBloodTypeAPIView, \
     ListMedicalTypeAPIView, ListSpecialistTypeAPIView, ListCollegesDegreesAPIView , AllSpecialList , RattingView , AppointmentWrite ,Appointmentview , Otpverify , AllPatient, login , chat ,palestineId , \
-        sendNotification , Comments , Fav , Fav_pk, Comments_pk , Appointment_pk
+        sendNotification , Comments , Fav , Fav_pk, Comments_pk , Appointment_pk , Recommendation
 
 URLS = [
     path(r'patients', PatientCreateAPIView.as_view()),
@@ -34,6 +34,11 @@ URLS = [
     path(r'comments/<pk>', Comments_pk.as_view()),
     path(r'fav/', Fav.as_view()),
     path(r'fav/<pk>', Fav_pk.as_view()),
+
+    
+    path(r'rec/', Recommendation.as_view()),
+
+    
 
 
 

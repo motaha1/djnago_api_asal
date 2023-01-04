@@ -81,7 +81,8 @@ def sendPush(title, msg, registration_token, dataObject=None):
     message = messaging.MulticastMessage(
         notification=messaging.Notification(
             title=title,
-            body=msg
+            body=msg 
+
         ),
         data=dataObject,
         tokens=registration_token,
@@ -91,14 +92,17 @@ def sendPush(title, msg, registration_token, dataObject=None):
     # registration token.
     response = messaging.send_multicast(message)
     # Response is a message ID string.
-    #print('Successfully sent message:', response)
+    print('Successfully sent message:', response)
 
 
 def firebase_sendNotification(title, msg, token):
-  sendPush(msg=msg , title=title ,registration_token=list(token))
+  tokens =[token]
+  sendPush(msg=msg , title=title ,registration_token=tokens)
   
  
-  
+firebase_sendNotification(msg='ddd' , title='fff', token='f7J9fQiYS0a3EoFoaJsgOn:APA91bHlJHYxMpy-omATNgCBftrmbQ3evlkJxsZfkoZzPJm4NZz68jAqp5lbuM8EkEsUuNey0LE91dfvpMF1Nh-476T_29eYAKMs8BtAv6uPkK8DMoCwqTpWTqLgVu2dcGVbv5PDdY6b')
+
+
 
 
 

@@ -166,5 +166,5 @@ class UserComponent:
     
     @staticmethod
     def sendNotification(title , msg , token):
-        firebase_sendNotification(token=list(token) , msg=msg , title=title)
+        firebase_sendNotification(token=(token) , msg=msg , title=title)
 

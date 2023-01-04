@@ -152,4 +152,9 @@ class SpecialistProfileAdmin(admin.ModelAdmin):
 
 admin.site.register(Appointment)
 admin.site.register(Comment)
+admin.site.register(PatientProfile)
+admin.site.register(ChronicIllness)
+
+
+
 
