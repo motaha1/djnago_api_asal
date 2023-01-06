@@ -122,6 +122,7 @@ class SpecialistProfile(AskCareBaseModel):
     allow_Messages = models.BooleanField(default=True)
     allow_booking = models.BooleanField(default=True)
     medical_type =   models.CharField(_('medical type'), choices=MedicalType.choices,max_length=1000,  null=True)  #medical type
+    at_home = models.BooleanField(default=False)
 
 
 
@@ -144,6 +145,7 @@ class Appointment(AskCareBaseModel):
     start = models.CharField(null=True  ,max_length=50 )
     end = models.CharField(null=True ,max_length=50)
     date = models.CharField(null=True ,max_length=50 )
+
     #%y/%m/%d
 
     # status = models.CharField(_('appointment status'), choices=AppointmentStatus.choices, max_length=50,
@@ -174,3 +176,15 @@ class Favorite(models.Model) :
     specialist = models.ForeignKey(SpecialistProfile, blank=False, null=False, on_delete=models.CASCADE)
     patient = models.ForeignKey(PatientProfile, blank=False, null=False, on_delete=models.CASCADE)
 
+
+class Notification (AskCareBaseModel) :
+    user = models.ForeignKey(User , on_delete=models.CASCADE )
+    msg = models.CharField(max_length= 1000 , null= True , blank=True)
+    title = models.CharField(max_length=10000 , null= True , blank= True)
+    
+ 
+
+
+class Location (models.Model) :
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    location = models.CharField(max_length=100000 )

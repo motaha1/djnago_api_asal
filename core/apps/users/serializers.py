@@ -3,7 +3,7 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from core.apps.abstract_models import ReadModelSerializer
-from core.apps.users.models import Appointment, User, UserMedia, SpecialistProfile, PatientProfile , Ratting , Comment , Favorite
+from core.apps.users.models import Appointment, User, UserMedia, SpecialistProfile, PatientProfile , Ratting , Comment , Favorite ,Notification
 from django.db.models import Avg
 
 # class ChangeUserPasswordSerializer(serializers.Serializer):
@@ -138,5 +138,8 @@ class FavSerializer(ModelSerializer) :
             fields = '__all__'
 
 
-
-        
+class NotificationSerializer(ModelSerializer):
+    user = ReadUserMiniInfoSerializer()
+    class  Meta:
+        model = Notification
+        fields = '__all__'

@@ -10,7 +10,7 @@ from core.apps.users.constants import BloodType, MedicalType, SpecialistType, Co
 from core.apps.users.models import SpecialistProfile, PatientProfile
 from core.apps.users.serializers import UserAvatarSerializer, WriteSpecialistSerializer, \
     ReadUserMiniInfoSerializer, ReadSpecialistSerializer, ReadPatientSerializer, WritePatientSerializer , ReadRatting ,WriteAppointmentSerializer , ReadAppointmentSerializer , ReadCommentSerializer  ,\
-        FavSerializer
+        FavSerializer , NotificationSerializer
 
 from core.apps.users.models import *
 from rest_framework import status
@@ -368,8 +368,75 @@ class AddFcmToken (generics.CreateAPIView):
             return Response('error')
 
 
+from django.db.models import Avg
+class Recommendation (generics.CreateAPIView) :
+    serializer_class = ReadSpecialistSerializer
+
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend , SearchFilter , OrderingFilter]
+
+    #ordering_fields = ['']
+    ordering = ['user__username']
+    def post (self, request, *args, **kwargs): 
+        id = request.data['id']
+        patient = PatientProfile.objects.get(id = id)
+        ill = patient.chronic_illness.all()
+        ill = ill[0].special_type
+
+        #ChronicIllness.objects.get(name = ill[0])
+        print(ill)
+        city = patient.user.city
+
+        list1 = SpecialistProfile.objects.all()
+        list2 = SpecialistProfile.objects.filter(user__city =city , medical_type = ill ).annotate(avg_rating=Avg('rates__stars')).order_by('avg_rating')
+        list1 = list1.exclude(user__city =city , medical_type = ill)
+        list3 = list1.filter(medical_type = ill).annotate(avg_rating=Avg('rates__stars')).order_by('avg_rating')
+        list1 = list1.exclude(medical_type = ill)
+        list4 = list1.filter(user__city = city).annotate(avg_rating=Avg('rates__stars')).order_by('avg_rating')
+        list1 = list1.exclude(user__city = city).annotate(avg_rating=Avg('rates__stars')).order_by('avg_rating')
+        print(list2)
+        print(list3)
+        print(list4)
 
 
+
+
+
+        print(list2[0].user.username)
+        return Response('ReadSpecialistSerializer(list4).data')
+
+
+
+class Notify(generics.ListCreateAPIView):
+    serializer_class = NotificationSerializer
+    queryset = Notification.objects.all()
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend , SearchFilter , OrderingFilter]
+    filterset_fields = ['user__email'] #go to home or not 
+    #search_fields = ['user__username']
+    #ordering_fields = ['created_at']
+    ordering = ['-created_at']
+
+
+    def post (self, request, *args, **kwargs)  :
+        user = request.data['user']
+        msg = request.data['msg']
+        title = request.data['title']
+        user = User.objects.get(id = user)
+        notification = Notification(user = user , msg = msg  , title = title)
+        notification.save()
+        return Response(NotificationSerializer(notification).data)
+
+
+class Notify_delete (generics.DestroyAPIView) :
+    def delete(self, request, *args, **kwargs) :
+        user = request.data['user']
+        user = User.objects.get(id= user)
+        notification = Notification.objects.filter(user=user)
+        notification.delete()
+        return Response('its deleted')
+
+
+
+        
 
 
 
