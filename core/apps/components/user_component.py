@@ -1,7 +1,7 @@
 from logging import getLogger
 from django.db import IntegrityError
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
-from core.apps.components.firebase import  firebase_chat, firebase_login, firebase_sendNotification, signup_firebase
+from core.apps.components.firebase import  firebase_chat, firebase_how_iam_talk, firebase_login, firebase_sendNotification, signup_firebase
 
 from core.apps.users.constants import InternalCustomAdminActions
 from core.apps.components.emails import send_otp_via_email
@@ -167,4 +167,10 @@ class UserComponent:
     @staticmethod
     def sendNotification(title , msg , token):
         firebase_sendNotification(token=(token) , msg=msg , title=title)
+
+    @staticmethod
+
+    def how_iam_talk(email) :
+       user =  firebase_how_iam_talk(email)
+       return user
 

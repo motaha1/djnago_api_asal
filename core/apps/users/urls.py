@@ -3,7 +3,7 @@ from django.urls import path
 from core.apps.users.views import PatientCreateAPIView, SpecialistCreateAPIView, UpdateUserAvatarView, \
     RetrieveOrUpdateSpecialistAPIView, RetrieveOrUpdatePatientAPIView, ListBloodTypeAPIView, \
     ListMedicalTypeAPIView, ListSpecialistTypeAPIView, ListCollegesDegreesAPIView , AllSpecialList , RattingView , AppointmentWrite ,Appointmentview , Otpverify , AllPatient, login , chat ,palestineId , \
-        sendNotification , Comments , Fav , Fav_pk, Comments_pk , Appointment_pk , Recommendation , Notify , Notify_delete
+        sendNotification , Comments , Fav , Fav_pk, Comments_pk , Appointment_pk , Recommendation , Notify , Notify_delete  ,AddFcmToken , Appoiment_change_status_done , Appoiment_change_status_cancel, Recommendation_chat_bot  ,Recommendation_special , how_i_am_talk , Complemnt_fav , delete_notify_specific
 
 URLS = [
     path(r'patients', PatientCreateAPIView.as_view()),
@@ -20,6 +20,13 @@ URLS = [
     path(r'viewappoiment/', Appointmentview.as_view()),
     path(r'appoiment/<pk>', Appointment_pk.as_view()),
 
+    path(r'appoiment_done/', Appoiment_change_status_done.as_view()),
+
+path(r'rec_chatbot/', Recommendation_chat_bot.as_view()),
+
+    
+
+
 
     
     path(r'otpverify/', Otpverify.as_view()),
@@ -28,17 +35,43 @@ URLS = [
     path(r'chat/', chat.as_view()),
     path(r'palestineid/', palestineId.as_view()),
     path(r'sendnotification/', sendNotification.as_view()),
+
+        path(r'how_i_am_talk/', how_i_am_talk.as_view()),
+
+    
    
     path(r'comments/', Comments.as_view()),
 
     path(r'comments/<pk>', Comments_pk.as_view()),
+    
     path(r'fav/', Fav.as_view()),
     path(r'fav/<pk>', Fav_pk.as_view()),
+
+    path(r'comp_fav/', Complemnt_fav.as_view()),
+
+    
 
     
     path(r'rec/', Recommendation.as_view()),
     path(r'notification/', Notify.as_view()),
     path(r'notification_delete/', Notify_delete.as_view()),
+    path(r'addfcm/', AddFcmToken.as_view()),
+    path(r'appoiment_cancel/', Appoiment_change_status_cancel.as_view()),
+    path(r'appoiment_cancel/', Appoiment_change_status_cancel.as_view()),
+
+    path(r'rec_special/', Recommendation_special.as_view()),
+
+      path(r'notification_delete_specific/', delete_notify_specific.as_view()),
+
+    
+
+
+
+
+    
+
+
+    
     
 
 

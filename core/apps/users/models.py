@@ -48,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin, AskCareBaseModel):
     is_patient = models.BooleanField(_('is patient'), default=False)
     is_specialist = models.BooleanField(_('is specialist'), default=False)
     fcm_token = models.CharField(max_length=100000 , blank=True , null=True )
+    avatar1 = models.CharField(max_length=1000000000 , blank=True , null=True )
 
     objects = UserManager()
     REQUIRED_FIELDS = ['username', 'password']
@@ -80,12 +81,24 @@ class User(AbstractBaseUser, PermissionsMixin, AskCareBaseModel):
         super(User, self).save(*args, **kwargs)
 
 
+class Symptoms(models.Model):
+    name = models.CharField(_('symptoms name'), max_length=100, null=False, blank=False)
+    special_type =  models.CharField(_('type'), choices=MedicalType.choices, max_length=50, null=True)
+    def __str__(self) :
+        return self.name
+
 class ChronicIllness(models.Model):
     name = models.CharField(_('chronic illness name'), max_length=100, null=False, blank=False, unique=True)
     special_type =  models.CharField(_('type'), choices=MedicalType.choices, max_length=50, null=True)    #new
 
     def __str__(self) :
         return self.name
+
+# class Symptoms(models.Model)  :
+#     name = models.CharField(_('Symptom name'), max_length=100, null=False, blank=False, unique=True)
+#     special_type =  models.CharField(_('type'), choices=MedicalType.choices, max_length=50, null=True)    #new
+
+
 
 
 class PatientProfile(AskCareBaseModel):
@@ -101,8 +114,12 @@ class PatientProfile(AskCareBaseModel):
     have_allergies = models.BooleanField(_('have allergies'), default=False)
 
     otp = models.CharField(max_length=200 , null=True , blank=True)  ####new 
+    chat_bot = models.ForeignKey(ChronicIllness , null=True , blank=True , on_delete=models.CASCADE , related_name='caht_bot')
+    symptoms = models.ForeignKey(Symptoms , null= True , blank= True , on_delete=models.CASCADE )
 
+    
 
+  
 class SpecialistProfile(AskCareBaseModel):
     user = models.OneToOneField(User,
                                 blank=False,
@@ -118,11 +135,14 @@ class SpecialistProfile(AskCareBaseModel):
     examination_avg_period = models.PositiveIntegerField(_('examination avg time'), default=15)  # in mins
     job_title = models.CharField(_('job'), max_length=225, blank=True)
 
+    
     ####new ##
     allow_Messages = models.BooleanField(default=True)
     allow_booking = models.BooleanField(default=True)
     medical_type =   models.CharField(_('medical type'), choices=MedicalType.choices,max_length=1000,  null=True)  #medical type
     at_home = models.BooleanField(default=False)
+    Fav = models.BooleanField(default= False)
+
 
 
 
@@ -135,8 +155,6 @@ class SpecialistProfile(AskCareBaseModel):
 
 
 
-class Symptoms(models.Model):
-    name = models.CharField(_('symptoms name'), max_length=100, null=False, blank=False, unique=True)
 
 
 class Appointment(AskCareBaseModel):
@@ -145,11 +163,17 @@ class Appointment(AskCareBaseModel):
     start = models.CharField(null=True  ,max_length=50 )
     end = models.CharField(null=True ,max_length=50)
     date = models.CharField(null=True ,max_length=50 )
+    location = models.CharField(max_length=1000000 ,null=True , blank= True)
 
     #%y/%m/%d
 
-    # status = models.CharField(_('appointment status'), choices=AppointmentStatus.choices, max_length=50,
-    # null=False, default=)
+    status = models.CharField(_('appointment status'), max_length=50,
+    null=True, default= 'upcoming')
+    
+    # patient_name = models.CharField(max_length=1000 , null=True , blank= True)
+    # patient_location = models.CharField(max_length= 100000 ,null=True , blank= True )
+
+
 
     # class Meta:
     #     unique_together = [['specialist', 'patient', 'time']]
@@ -175,12 +199,16 @@ class Comment(AskCareBaseModel) :
 class Favorite(models.Model) :
     specialist = models.ForeignKey(SpecialistProfile, blank=False, null=False, on_delete=models.CASCADE)
     patient = models.ForeignKey(PatientProfile, blank=False, null=False, on_delete=models.CASCADE)
+    class Meta:
+        unique_together = (('specialist', 'patient'),)
+        
 
 
 class Notification (AskCareBaseModel) :
     user = models.ForeignKey(User , on_delete=models.CASCADE )
     msg = models.CharField(max_length= 1000 , null= True , blank=True)
     title = models.CharField(max_length=10000 , null= True , blank= True)
+    #date = models.DateTimeField(null=True , blank=True , auto_now=True)
     
  
 

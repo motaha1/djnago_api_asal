@@ -98,9 +98,25 @@ def sendPush(title, msg, registration_token, dataObject=None):
 def firebase_sendNotification(title, msg, token):
   tokens =[token]
   sendPush(msg=msg , title=title ,registration_token=tokens)
+
+
+def firebase_how_iam_talk(email):
+  y = []
+  user_data = db.collection('users').document(email).collection('chats').get()
+  for x in user_data :
+    y.append(str(x.id))
+    print (y) 
+  return y 
+    
+
+
+
+firebase_how_iam_talk('hellopatient@gmail.com')
+
+
   
  
-firebase_sendNotification(msg='ddd' , title='fff', token='f7J9fQiYS0a3EoFoaJsgOn:APA91bHlJHYxMpy-omATNgCBftrmbQ3evlkJxsZfkoZzPJm4NZz68jAqp5lbuM8EkEsUuNey0LE91dfvpMF1Nh-476T_29eYAKMs8BtAv6uPkK8DMoCwqTpWTqLgVu2dcGVbv5PDdY6b')
+#firebase_sendNotification(msg='ddd' , title='fff', token='f7J9fQiYS0a3EoFoaJsgOn:APA91bHlJHYxMpy-omATNgCBftrmbQ3evlkJxsZfkoZzPJm4NZz68jAqp5lbuM8EkEsUuNey0LE91dfvpMF1Nh-476T_29eYAKMs8BtAv6uPkK8DMoCwqTpWTqLgVu2dcGVbv5PDdY6b')
 
 
 

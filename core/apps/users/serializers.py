@@ -41,6 +41,9 @@ class ReadSpecialistSerializer(ReadModelSerializer):
 
     rattingScore = serializers.SerializerMethodField("apple")
 
+    avg_rating = serializers.FloatField( required = False)
+    
+
     def apple(self , object):
       return  Ratting.objects.filter(specialist = object).aggregate(Avg('stars'))
         

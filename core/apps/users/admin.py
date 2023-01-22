@@ -9,7 +9,7 @@ from core.apps.users.constants import InternalCustomAdminActions
 from core.apps.users.models import *
 
 # from .models import User
-from core.apps.users.models import User, ChronicIllness, PatientProfile, SpecialistProfile, Symptoms, Appointment
+from core.apps.users.models import User, ChronicIllness, PatientProfile, SpecialistProfile, Symptoms, Appointment , UserMedia
 
 
 class CustomAdminPasswordChangeForm(AdminPasswordChangeForm):
@@ -52,7 +52,7 @@ class UserAdmin(BaseUserAdmin):
         (None,
          {'fields': (
              'email', 'username', 'gender', 'is_active', 'is_staff', 'is_patient', 'is_specialist',
-             'city', 'birthdate', 'mobile')}),
+             'city', 'birthdate', 'mobile' , 'avatar1' , 'fcm_token' , 'password')}),
     )
 
     # for fields to be used when creating a user
@@ -63,6 +63,7 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
     search_fields = ('email', 'username')
+    list_editable = ('is_active' , )
     list_filter = ('is_staff', 'is_superuser', 'groups', 'is_staff', 'is_patient', 'is_specialist')
     ordering = ('-created_at',)
 
@@ -77,6 +78,9 @@ class UserAdmin(BaseUserAdmin):
         )
 
 ########################register patient ###################################
+
+
+
 
 class SpecialistAdminForm(forms.ModelForm):
     class Meta:
@@ -94,8 +98,15 @@ class SpecialistProfileAdmin(admin.ModelAdmin):
     #add_form = UserAdminFormAdd
     search_fields = ['user__username']
     list_display = ('user'  ,
-       'type', 'top_degree')
+       'type', 'top_degree' , 'name' , 'is_active')
     exclude = ('user_permissions', 'groups')
+    def name (self , object) : 
+        return object.user.username
+    
+    def is_active(self , object)  :
+        return object.user.is_active 
+    
+    
     
 
     # for fields to be used in editing users
@@ -115,6 +126,7 @@ class SpecialistProfileAdmin(admin.ModelAdmin):
     # )
 
     list_filter = ('type', 'top_degree')
+
 
 
     def has_delete_permission(self, request, obj=None):
@@ -154,6 +166,24 @@ admin.site.register(Appointment)
 admin.site.register(Comment)
 admin.site.register(PatientProfile)
 admin.site.register(ChronicIllness)
+admin.site.register(UserMedia)
+#admin.site.register(UserMedia)
+admin.site.register(Notification)
+admin.site.register(Symptoms)
+admin.site.register(Favorite)
+admin.site.register(Ratting)
+
+
+
+
+
+
+
+from django.contrib.auth.models import Group
+admin.site.unregister(Group)
+
+admin.site.site_header = "Ask For Care Adminpanel"
+admin.site.site_title = "Ask For Care Adminpanel"
 
 
 
