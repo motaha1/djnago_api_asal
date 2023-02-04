@@ -678,6 +678,26 @@ class Complemnt_fav (generics.CreateAPIView):
             fav.delete()
 
         return Response('ok')
+
+class convert_corona(generics.CreateAPIView)  :
+    def post(self, request, *args, **kwargs):
+
+        
+        patient = PatientProfile.objects.get(id=5)
+        patient.chat_bot = ChronicIllness.objects.get(id=2)
+        patient.save()
+        return Response('ok')
+
+class convert_nothing(generics.CreateAPIView)  :
+    def post(self, request, *args, **kwargs):
+
+        
+        patient = PatientProfile.objects.get(id=5)
+        patient.chat_bot = ChronicIllness.objects.get(id=3)
+        print(patient.chat_bot.name)
+        patient.save()
+        return Response('ok')
+    
                 
         
 

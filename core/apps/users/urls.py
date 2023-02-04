@@ -3,7 +3,7 @@ from django.urls import path
 from core.apps.users.views import PatientCreateAPIView, SpecialistCreateAPIView, UpdateUserAvatarView, \
     RetrieveOrUpdateSpecialistAPIView, RetrieveOrUpdatePatientAPIView, ListBloodTypeAPIView, \
     ListMedicalTypeAPIView, ListSpecialistTypeAPIView, ListCollegesDegreesAPIView , AllSpecialList , RattingView , AppointmentWrite ,Appointmentview , Otpverify , AllPatient, login , chat ,palestineId , \
-        sendNotification , Comments , Fav , Fav_pk, Comments_pk , Appointment_pk , Recommendation , Notify , Notify_delete  ,AddFcmToken , Appoiment_change_status_done , Appoiment_change_status_cancel, Recommendation_chat_bot  ,Recommendation_special , how_i_am_talk , Complemnt_fav , delete_notify_specific
+        sendNotification , Comments , Fav , Fav_pk, Comments_pk , Appointment_pk , Recommendation , Notify , Notify_delete  ,AddFcmToken , Appoiment_change_status_done , Appoiment_change_status_cancel, Recommendation_chat_bot  ,Recommendation_special , how_i_am_talk , Complemnt_fav , delete_notify_specific , convert_corona , convert_nothing
 
 URLS = [
     path(r'patients', PatientCreateAPIView.as_view()),
@@ -62,6 +62,13 @@ path(r'rec_chatbot/', Recommendation_chat_bot.as_view()),
     path(r'rec_special/', Recommendation_special.as_view()),
 
       path(r'notification_delete_specific/', delete_notify_specific.as_view()),
+      path(r'convert_corona/', convert_corona.as_view()),
+                                                      
+      path(r'convert_nothing/', convert_nothing.as_view()),
+
+
+
+
 
     
 
